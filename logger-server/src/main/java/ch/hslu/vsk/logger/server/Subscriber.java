@@ -3,16 +3,13 @@ package ch.hslu.vsk.logger.server;
 import ch.hslu.vsk.logger.common.LogMessage;
 import ch.hslu.vsk.stringpersistor.api.StringPersistor;
 import ch.hslu.vsk.stringpersistor.impl.StringPersistorFactory;
-import ch.hslu.vsk.stringpersistor.impl.StringPersistorImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
-import java.io.File;
 import java.nio.file.Path;
-import java.time.Instant;
 
 public class Subscriber {
 
@@ -46,7 +43,7 @@ public class Subscriber {
         while (!Thread.currentThread().isInterrupted()) {
             String message = subscriber.receive();
             ObjectMapper objectMapper = new ObjectMapper();
-            LogMessage logMessage= objectMapper.readValue(message, LogMessage.class);
+            LogMessage logMessage = objectMapper.readValue(message, LogMessage.class);
             persistor.save(logMessage.getTimestamp(), logMessage.getMessage());
         }
         subscriber.close();
