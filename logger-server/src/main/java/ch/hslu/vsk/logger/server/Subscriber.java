@@ -1,8 +1,18 @@
 package ch.hslu.vsk.logger.server;
 
+import ch.hslu.vsk.logger.common.LogMessage;
+import ch.hslu.vsk.stringpersistor.api.StringPersistor;
+import ch.hslu.vsk.stringpersistor.impl.StringPersistorFactory;
+import ch.hslu.vsk.stringpersistor.impl.StringPersistorImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.time.Instant;
 
 public class Subscriber {
 
@@ -17,6 +27,7 @@ public class Subscriber {
     }
 
     public String receive() {
+
         byte[] message = socket.recv();
         if (message == null) {
             throw new RuntimeException("failed to receive message (errno: " + socket.errno());
@@ -29,11 +40,14 @@ public class Subscriber {
         context.close();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws JsonProcessingException {
         Subscriber subscriber = new Subscriber("tcp://localhost:5555");
+        StringPersistor persistor = StringPersistorFactory.create(Path.of("log.txt"));
         while (!Thread.currentThread().isInterrupted()) {
             String message = subscriber.receive();
-            System.out.println(message);
+            ObjectMapper objectMapper = new ObjectMapper();
+            LogMessage logMessage= objectMapper.readValue(message, LogMessage.class);
+            persistor.save(logMessage.getTimestamp(), logMessage.getMessage());
         }
         subscriber.close();
     }
