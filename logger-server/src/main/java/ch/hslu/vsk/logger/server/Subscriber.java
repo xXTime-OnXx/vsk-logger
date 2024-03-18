@@ -24,7 +24,6 @@ public class Subscriber {
     }
 
     public String receive() {
-
         byte[] message = socket.recv();
         if (message == null) {
             throw new RuntimeException("failed to receive message (errno: " + socket.errno());
@@ -42,6 +41,7 @@ public class Subscriber {
         StringPersistor persistor = StringPersistorFactory.create(Path.of("log.txt"));
         while (!Thread.currentThread().isInterrupted()) {
             String message = subscriber.receive();
+            System.out.println(message);
             ObjectMapper objectMapper = new ObjectMapper();
             LogMessage logMessage = objectMapper.readValue(message, LogMessage.class);
             persistor.save(logMessage.getTimestamp(), logMessage.getMessage());
