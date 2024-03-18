@@ -4,13 +4,15 @@ import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
-public class Publisher {
+import java.net.URI;
+
+class Publisher implements AutoCloseable {
 
     private final ZContext context = new ZContext();
     private final ZMQ.Socket socket = context.createSocket(SocketType.PUB);
 
-    public Publisher(String address) {
-        socket.bind(address);
+    public Publisher(URI address) {
+        socket.bind(address.toString());
     }
 
     public void send(String message) {
@@ -20,6 +22,7 @@ public class Publisher {
         }
     }
 
+    @Override
     public void close() {
         socket.close();
         context.close();

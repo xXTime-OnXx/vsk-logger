@@ -46,6 +46,13 @@
             <groupId>org.zeromq</groupId>
             <artifactId>jeromq</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+        </dependency><dependency>
+        <groupId>com.fasterxml.jackson.core</groupId>
+        <artifactId>jackson-core</artifactId>
+    </dependency>
 
         <dependency>
             <groupId>org.junit.jupiter</groupId>
