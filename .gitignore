@@ -2,3 +2,5 @@
 **/*.log
 .project
 .classpath
+.idea
+log.txt
