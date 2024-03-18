@@ -5,6 +5,7 @@ import ch.hslu.vsk.stringpersistor.api.StringPersistor;
 import ch.hslu.vsk.stringpersistor.impl.StringPersistorFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
@@ -42,7 +43,7 @@ public class Subscriber {
         while (!Thread.currentThread().isInterrupted()) {
             String message = subscriber.receive();
             System.out.println(message);
-            ObjectMapper objectMapper = new ObjectMapper();
+            ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
             LogMessage logMessage = objectMapper.readValue(message, LogMessage.class);
             persistor.save(logMessage.getTimestamp(), logMessage.getMessage());
         }

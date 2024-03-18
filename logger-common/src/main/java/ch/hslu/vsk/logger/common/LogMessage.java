@@ -4,17 +4,18 @@ import java.time.Instant;
 
 
 public class LogMessage {
-    private final String message;
-    private final Instant timestamp;
 
-    public LogMessage(final String message, final Instant timestamp) {
-        this.message = message;
-        this.timestamp = timestamp;
-    }
+    private String message;
+    private Instant timestamp;
+
     public LogMessage(final String message) {
         this.message = message;
         this.timestamp = Instant.now();
     }
+
+    public LogMessage() {
+    }
+
     public String getMessage() {
         return message;
     }
@@ -23,5 +24,12 @@ public class LogMessage {
         return timestamp;
     }
 
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
+    }
 
 }
