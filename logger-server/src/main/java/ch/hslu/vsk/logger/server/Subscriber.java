@@ -5,6 +5,7 @@ import ch.hslu.vsk.stringpersistor.api.StringPersistor;
 import ch.hslu.vsk.stringpersistor.impl.StringPersistorFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
@@ -24,7 +25,6 @@ public class Subscriber {
     }
 
     public String receive() {
-
         byte[] message = socket.recv();
         if (message == null) {
             throw new RuntimeException("failed to receive message (errno: " + socket.errno());
@@ -42,7 +42,9 @@ public class Subscriber {
         StringPersistor persistor = StringPersistorFactory.create(Path.of("log.txt"));
         while (!Thread.currentThread().isInterrupted()) {
             String message = subscriber.receive();
+            System.out.println(message);
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
             LogMessage logMessage = objectMapper.readValue(message, LogMessage.class);
             persistor.save(logMessage.getTimestamp(), logMessage.getMessage());
         }

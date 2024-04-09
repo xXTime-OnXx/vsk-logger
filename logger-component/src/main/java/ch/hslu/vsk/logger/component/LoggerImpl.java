@@ -5,6 +5,7 @@ import ch.hslu.vsk.logger.api.Logger;
 import ch.hslu.vsk.logger.common.LogMessage;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.net.URI;
 
@@ -56,6 +57,7 @@ class LoggerImpl implements Logger {
     private static String mapToJson(LogMessage logMessage) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
+            objectMapper.registerModule(new JavaTimeModule());
             return objectMapper.writeValueAsString(logMessage);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("Couldn't parse Object to JSON", e);

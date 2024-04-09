@@ -2,10 +2,11 @@ package ch.hslu.vsk.logger.common;
 
 import java.time.Instant;
 
-
 public class LogMessage {
-    private final String message;
-    private final Instant timestamp;
+    private String message;
+    private Instant timestamp;
+
+    public LogMessage() {}
 
     public LogMessage(final String message) {
         this.message = message;
@@ -18,5 +19,13 @@ public class LogMessage {
 
     public Instant getTimestamp() {
         return timestamp;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void setTimestamp(Instant timestamp) {
+        this.timestamp = timestamp;
     }
 }
