@@ -83,6 +83,11 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.zeromq</groupId>-->
+<!--            <artifactId>jeromq</artifactId>-->
+<!--            <version>0.6.0</version>-->
+<!--        </dependency>-->
     </dependencies>
 
     <build>
