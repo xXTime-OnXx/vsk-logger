@@ -3,20 +3,18 @@ package ch.hslu.vsk.logger.component;
 import ch.hslu.vsk.logger.api.LogLevel;
 import ch.hslu.vsk.logger.api.Logger;
 import ch.hslu.vsk.logger.common.LogMessage;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.net.URI;
 
 class LoggerImpl implements Logger {
 
+    private final MessageManager messageManager;
+
     private final LogLevel minLogLevel;
-    private final Publisher publisher;
 
     public LoggerImpl(LogLevel minLogLevel, URI targetServerAddress) {
         this.minLogLevel = minLogLevel;
-        this.publisher = new Publisher(targetServerAddress);
+        this.messageManager = new MessageManager(targetServerAddress);
     }
 
     @Override
@@ -51,17 +49,7 @@ class LoggerImpl implements Logger {
             return;
         }
         LogMessage logMessage = new LogMessage(String.format("[%s] %s", logLevel.name(), message));
-        publisher.send(mapToJson(logMessage));
-    }
-
-    private static String mapToJson(LogMessage logMessage) {
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
-            return objectMapper.writeValueAsString(logMessage);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("Couldn't parse Object to JSON", e);
-        }
+        messageManager.save(logMessage);
     }
 
 }
