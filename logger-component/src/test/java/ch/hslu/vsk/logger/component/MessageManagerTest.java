@@ -17,18 +17,18 @@ import static org.mockito.Mockito.verify;
 class MessageManagerTest {
 
     @Mock
-    Publisher publisher;
+    LoggerClient loggerClient;
 
     @Test
     void saveShouldSendLogMessageAsJsonToTarget() throws JsonProcessingException {
-        MessageManager messageManager = new MessageManager(publisher, Path.of("/dev"));
+        MessageManager messageManager = new MessageManager(loggerClient, Path.of("/dev"));
         LogMessage logMessage = new LogMessage("Log Message");
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String logMessageJson = objectMapper.writeValueAsString(logMessage);
 
         messageManager.save(logMessage);
 
-        verify(publisher).send(logMessageJson);
+        verify(loggerClient).sendLogMessage(logMessageJson);
     }
 
 }

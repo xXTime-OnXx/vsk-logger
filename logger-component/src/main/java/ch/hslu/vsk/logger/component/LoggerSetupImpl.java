@@ -24,8 +24,8 @@ class LoggerSetupImpl implements LoggerSetup {
 
     @Override
     public Logger createLogger() {
-        Publisher publisher = new Publisher(targetServerAddress);
-        MessageManager messageManager = new MessageManager(publisher, fallbackFile);
+        LoggerClient loggerClient = new LoggerClient(targetServerAddress);
+        MessageManager messageManager = new MessageManager(loggerClient, fallbackFile);
         return new LoggerImpl(this, messageManager);
     }
 
