@@ -7,14 +7,14 @@ import java.nio.file.Path;
 
 class MessageManager {
 
-    private final Publisher publisher;
+    private final LoggerClient loggerClient;
 
-    public MessageManager(Publisher publisher, Path fallbackFile) {
-        this.publisher = publisher;
+    public MessageManager(LoggerClient loggerClient, Path fallbackFile) {
+        this.loggerClient = loggerClient;
     }
 
     public void save(LogMessage logMessage) {
         String logMessageJson = JsonMapper.toString(logMessage);
-        publisher.send(logMessageJson);
+        String response = loggerClient.sendLogMessage(logMessageJson);
     }
 }
