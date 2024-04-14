@@ -6,24 +6,27 @@ import ch.hslu.vsk.logger.api.LoggerSetup;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Objects;
 
-public class LoggerSetupImpl implements LoggerSetup {
+class LoggerSetupImpl implements LoggerSetup {
 
     private LogLevel minLogLevel;
-    private String source;
-    private Path fallbackFile;
-    private URI targetServerAddress;
+    private final String source;
+    private final Path fallbackFile;
+    private final URI targetServerAddress;
 
     LoggerSetupImpl(LoggerSetupBuilderImpl builder) {
-        this.minLogLevel = builder.minLogLevel;
-        this.source = builder.source;
-        this.fallbackFile = builder.fallbackFile;
-        this.targetServerAddress = builder.targetServerAddress;
+        this.minLogLevel = builder.getMinLogLevel();
+        this.source = builder.getSource();
+        this.fallbackFile = builder.getFallbackFilePath();
+        this.targetServerAddress = builder.getTargetServerAddress();
     }
 
     @Override
     public Logger createLogger() {
-        return new LoggerImpl(minLogLevel, targetServerAddress);
+        Publisher publisher = new Publisher(targetServerAddress);
+        MessageManager messageManager = new MessageManager(publisher, fallbackFile);
+        return new LoggerImpl(this, messageManager);
     }
 
     @Override
@@ -33,7 +36,13 @@ public class LoggerSetupImpl implements LoggerSetup {
 
     @Override
     public void setMinLogLevel(LogLevel logLevel) {
+        if (Objects.isNull(logLevel)) {
+            throw new IllegalStateException("LogLevel cannot be null");
+        }
         this.minLogLevel = logLevel;
     }
 
+    public String getSource() {
+        return source;
+    }
 }

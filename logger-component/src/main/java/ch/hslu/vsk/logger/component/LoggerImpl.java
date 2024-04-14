@@ -4,17 +4,14 @@ import ch.hslu.vsk.logger.api.LogLevel;
 import ch.hslu.vsk.logger.api.Logger;
 import ch.hslu.vsk.logger.common.LogMessage;
 
-import java.net.URI;
-
 class LoggerImpl implements Logger {
 
     private final MessageManager messageManager;
+    private final LoggerSetupImpl loggerSetup;
 
-    private final LogLevel minLogLevel;
-
-    public LoggerImpl(LogLevel minLogLevel, URI targetServerAddress) {
-        this.minLogLevel = minLogLevel;
-        this.messageManager = new MessageManager(targetServerAddress);
+    public LoggerImpl(LoggerSetupImpl loggerSetup, MessageManager messageManager) {
+        this.loggerSetup = loggerSetup;
+        this.messageManager = messageManager;
     }
 
     @Override
@@ -45,7 +42,7 @@ class LoggerImpl implements Logger {
 
     @Override
     public void log(LogLevel logLevel, String message) {
-        if (logLevel.ordinal() > minLogLevel.ordinal()) {
+        if (logLevel.ordinal() > loggerSetup.getMinLogLevel().ordinal()) {
             return;
         }
         LogMessage logMessage = new LogMessage(String.format("[%s] %s", logLevel.name(), message));

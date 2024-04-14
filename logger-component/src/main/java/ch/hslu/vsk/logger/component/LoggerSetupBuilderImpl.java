@@ -6,12 +6,14 @@ import ch.hslu.vsk.logger.api.LoggerSetupBuilder;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.util.Objects;
 
 public class LoggerSetupBuilderImpl implements LoggerSetupBuilder {
-    public LogLevel minLogLevel;
-    public String source;
-    public Path fallbackFile;
-    public URI targetServerAddress;
+
+    private LogLevel minLogLevel;
+    private String source;
+    private Path fallbackFilePath;
+    private URI targetServerAddress;
 
     @Override
     public LoggerSetupBuilder requires(LogLevel minLogLevel) {
@@ -27,7 +29,7 @@ public class LoggerSetupBuilderImpl implements LoggerSetupBuilder {
 
     @Override
     public LoggerSetupBuilder usesAsFallback(Path path) {
-        this.fallbackFile = path;
+        this.fallbackFilePath = path;
         return this;
     }
 
@@ -39,8 +41,35 @@ public class LoggerSetupBuilderImpl implements LoggerSetupBuilder {
 
     @Override
     public LoggerSetup build() {
-        // TODO: validation
+        if (Objects.isNull(minLogLevel)) {
+            throw new IllegalStateException("LogLevel cannot be null");
+        }
+        if (Objects.isNull(source) || source.isEmpty()) {
+            throw new IllegalStateException("Source cannot be null or empty");
+        }
+        if (Objects.isNull(fallbackFilePath)) {
+            throw new IllegalStateException("Fallback path cannot be null");
+        }
+        if (Objects.isNull(targetServerAddress)) {
+            throw new IllegalStateException("Target server address cannot be null");
+        }
         return new LoggerSetupImpl(this);
+    }
+
+    public LogLevel getMinLogLevel() {
+        return minLogLevel;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public Path getFallbackFilePath() {
+        return fallbackFilePath;
+    }
+
+    public URI getTargetServerAddress() {
+        return targetServerAddress;
     }
 
 }
