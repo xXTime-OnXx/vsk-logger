@@ -22,17 +22,19 @@ class LoggerSetupBuilderImplTest {
 
     @Test
     void buildShouldReturnLoggerSetup() {
+        Path fallbackPath = Path.of("/dev", "null");
+        URI targetAddress = URI.create("http://localhost:1234");
         LoggerSetup loggerSetup = loggerSetupBuilder
                 .requires(LogLevel.Info)
                 .from("test-app")
-                .usesAsFallback(Path.of("/dev", "null"))
-                .targetsServer(URI.create("http://localhost:1234"))
+                .usesAsFallback(fallbackPath)
+                .targetsServer(targetAddress)
                 .build();
 
         assertEquals(LogLevel.Info, loggerSetupBuilder.getMinLogLevel());
         assertEquals("test-app", loggerSetupBuilder.getSource());
-        assertEquals("\\dev\\null", loggerSetupBuilder.getFallbackFilePath().toString());
-        assertEquals("http://localhost:1234", loggerSetupBuilder.getTargetServerAddress().toString());
+        assertEquals(fallbackPath.toString(), loggerSetupBuilder.getFallbackFilePath().toString());
+        assertEquals(targetAddress.toString(), loggerSetupBuilder.getTargetServerAddress().toString());
 
         assertTrue(Objects.nonNull(loggerSetup));
         assertEquals(LogLevel.Info, loggerSetup.getMinLogLevel());
