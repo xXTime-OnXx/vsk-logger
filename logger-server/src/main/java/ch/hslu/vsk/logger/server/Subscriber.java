@@ -43,8 +43,7 @@ public class Subscriber {
         while (!Thread.currentThread().isInterrupted()) {
             String message = subscriber.receive();
             System.out.println(message);
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.registerModule(new JavaTimeModule());
+            ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
             LogMessage logMessage = objectMapper.readValue(message, LogMessage.class);
             persistor.save(logMessage.getTimestamp(), logMessage.getMessage());
         }
