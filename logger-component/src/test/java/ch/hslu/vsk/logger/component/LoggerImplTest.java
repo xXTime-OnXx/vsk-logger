@@ -24,6 +24,8 @@ class LoggerImplTest {
     private LoggerImpl logger;
     private LoggerSetupImpl loggerSetup;
 
+    private final String source = "test-app";
+
     @Mock
     MessageManager messageManager;
 
@@ -35,7 +37,7 @@ class LoggerImplTest {
         LoggerSetupBuilderImpl loggerSetupBuilder = new LoggerSetupBuilderImpl();
         loggerSetup = (LoggerSetupImpl) loggerSetupBuilder
                 .requires(LogLevel.Info)
-                .from("test-app")
+                .from(source)
                 .usesAsFallback(Path.of("/dev", "null"))
                 .targetsServer(URI.create("tcp://localhost:5555"))
                 .build();
@@ -60,7 +62,9 @@ class LoggerImplTest {
         verify(messageManager).save(logMessageCaptor.capture());
         LogMessage logMessage = logMessageCaptor.getValue();
 
-        assertEquals("[Info] Log Message", logMessage.getMessage());
+        assertEquals(source, logMessage.getSource());
+        assertEquals(LogLevel.Info, logMessage.getLogLevel());
+        assertEquals("Log Message", logMessage.getMessage());
     }
 
     @Test
@@ -71,7 +75,10 @@ class LoggerImplTest {
 
         verify(messageManager).save(logMessageCaptor.capture());
         LogMessage logMessage = logMessageCaptor.getValue();
-        assertEquals("[Error] Error Log Message: Exception Message", logMessage.getMessage());
+
+        assertEquals(source, logMessage.getSource());
+        assertEquals(LogLevel.Error, logMessage.getLogLevel());
+        assertEquals("Error Log Message: Exception Message", logMessage.getMessage());
     }
 
     @Test
@@ -82,7 +89,10 @@ class LoggerImplTest {
 
         verify(messageManager).save(logMessageCaptor.capture());
         LogMessage logMessage = logMessageCaptor.getValue();
-        assertEquals("[Debug] Debug Log Message", logMessage.getMessage());
+
+        assertEquals(source, logMessage.getSource());
+        assertEquals(LogLevel.Debug, logMessage.getLogLevel());
+        assertEquals("Debug Log Message", logMessage.getMessage());
     }
 
     @Test
@@ -93,7 +103,10 @@ class LoggerImplTest {
 
         verify(messageManager).save(logMessageCaptor.capture());
         LogMessage logMessage = logMessageCaptor.getValue();
-        assertEquals("[Info] Info Log Message", logMessage.getMessage());
+
+        assertEquals(source, logMessage.getSource());
+        assertEquals(LogLevel.Info, logMessage.getLogLevel());
+        assertEquals("Info Log Message", logMessage.getMessage());
     }
 
     @Test
@@ -104,7 +117,10 @@ class LoggerImplTest {
 
         verify(messageManager).save(logMessageCaptor.capture());
         LogMessage logMessage = logMessageCaptor.getValue();
-        assertEquals("[Warning] Warning Log Message", logMessage.getMessage());
+
+        assertEquals(source, logMessage.getSource());
+        assertEquals(LogLevel.Warning, logMessage.getLogLevel());
+        assertEquals("Warning Log Message", logMessage.getMessage());
     }
 
     @Test
@@ -115,7 +131,10 @@ class LoggerImplTest {
 
         verify(messageManager).save(logMessageCaptor.capture());
         LogMessage logMessage = logMessageCaptor.getValue();
-        assertEquals("[Error] Error Log Message", logMessage.getMessage());
+
+        assertEquals(source, logMessage.getSource());
+        assertEquals(LogLevel.Error, logMessage.getLogLevel());
+        assertEquals("Error Log Message", logMessage.getMessage());
     }
 
 }
