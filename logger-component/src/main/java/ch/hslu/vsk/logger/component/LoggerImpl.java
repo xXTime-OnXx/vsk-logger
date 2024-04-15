@@ -45,7 +45,7 @@ class LoggerImpl implements Logger {
         if (logLevel.ordinal() > loggerSetup.getMinLogLevel().ordinal()) {
             return;
         }
-        LogMessage logMessage = new LogMessage(String.format("[%s] %s", logLevel.name(), message));
+        LogMessage logMessage = new LogMessage(loggerSetup.getSource(), logLevel, message);
         messageManager.save(logMessage);
     }
 
