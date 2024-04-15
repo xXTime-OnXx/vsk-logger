@@ -18,7 +18,7 @@ public class LoggerServer {
             String message = socketHandler.receive();
             System.out.println("Received message: " + message);
             LogMessage logMessage = JsonMapper.fromString(message, LogMessage.class);
-            stringPersistor.save(logMessage.getTimestamp(), logMessage.getMessage());
+            stringPersistor.save(logMessage.getTimestamp(), logMessage.toStringWithoutTimestamp());
             socketHandler.reply("received");
         }
     }
