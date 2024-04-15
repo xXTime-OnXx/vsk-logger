@@ -31,6 +31,13 @@
         VSK Logger Server von Logger g04.
     </description>
 
+    <properties>
+        <jar.start.class>ch.hslu.vsk.logger.server.Application</jar.start.class>
+        <docker.user>tiimonschmid</docker.user>
+        <docker.image>logger-server</docker.image>
+        <docker.port>5555</docker.port>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>ch.hslu.vsk24fs.g04</groupId>
@@ -94,31 +101,21 @@
                 <configuration>
                     <images>
                         <image>
-                            <name>logger-server</name>
-                            <build>
-                                <contextDir>/dockerconf</contextDir>
-                                <filter>@</filter>
-                            </build>
+                            <name>${docker.user}/${docker.image}:%l</name>
+                            <run>
+                                <ports>
+                                    <port>${docker.port}:${docker.port}</port>
+                                </ports>
+                            </run>
                         </image>
-
                     </images>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>start</id>
-                        <phase>pre-integration-test</phase>
+                        <id>build</id>
+                        <phase>install</phase>
                         <goals>
-                            <!-- "build" should be used to create the images with the
-                                 artifact -->
                             <goal>build</goal>
-                            <goal>start</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>stop</id>
-                        <phase>post-integration-test</phase>
-                        <goals>
-                            <goal>stop</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -149,6 +146,28 @@
                         <directory>${project.basedir}/src/test/java</directory>
                     </testSourceDirectories>
                 </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${jar.start.class}</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
