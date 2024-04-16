@@ -8,7 +8,7 @@ import java.nio.file.Path;
 public class Application {
     public static void main(String[] args) {
         StringPersistor stringPersistor = StringPersistorFactory.create(Path.of("log.txt"));
-        LoggerServer loggerServer = new LoggerServer("tcp://localhost:5555", stringPersistor);
+        LoggerServer loggerServer = new LoggerServer("tcp://*:5555", stringPersistor);
         loggerServer.start();
     }
 }
