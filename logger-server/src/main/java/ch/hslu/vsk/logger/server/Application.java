@@ -9,7 +9,7 @@ import java.util.Properties;
 
 public class Application {
     public static void main(String[] args) {
-        Properties prop = ConfigFileReader.Read(Path.of("app.config"));
+        Properties prop = ConfigFileReader.read(Path.of("app.config"));
 
         StringPersistor stringPersistor = StringPersistorFactory.create(Path.of(prop.getProperty("logFilePath")));
         LoggerServer loggerServer = new LoggerServer(prop.getProperty("url") + ":" + prop.getProperty("port"), stringPersistor);
