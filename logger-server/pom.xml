@@ -124,6 +124,7 @@
             <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
+                    <finalName>g04-logger-server</finalName>
                     <archive>
                         <manifest>
                             <mainClass>${jar.start.class}</mainClass>
@@ -132,6 +133,7 @@
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
                 </configuration>
                 <executions>
                     <execution>
