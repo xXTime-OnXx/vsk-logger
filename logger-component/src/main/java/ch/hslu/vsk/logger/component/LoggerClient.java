@@ -6,7 +6,7 @@ import org.zeromq.ZMQ;
 
 import java.net.URI;
 
-public class LoggerClient {
+class LoggerClient {
     private final ZContext context = new ZContext();
     private ZMQ.Socket socket;
     public LoggerClient(URI address) {

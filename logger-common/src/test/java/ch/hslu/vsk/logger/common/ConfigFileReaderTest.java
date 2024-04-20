@@ -20,7 +20,7 @@ public class ConfigFileReaderTest {
             writer.write("key2=value2\n");
         }
 
-        Properties properties = ConfigFileReader.Read(tempFile);
+        Properties properties = ConfigFileReader.read(tempFile);
 
         assertEquals("value1", properties.getProperty("key1"));
         assertEquals("value2", properties.getProperty("key2"));
@@ -28,7 +28,7 @@ public class ConfigFileReaderTest {
 
     @Test
     public void testReadNonExistentFile() {
-        Properties properties = ConfigFileReader.Read(Path.of("non-existent-file.properties"));
+        Properties properties = ConfigFileReader.read(Path.of("non-existent-file.properties"));
 
         assertTrue(properties.isEmpty());
     }

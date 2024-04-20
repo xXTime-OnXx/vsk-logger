@@ -5,7 +5,7 @@ import java.nio.file.Path;
 import java.util.Properties;
 
 public class ConfigFileReader {
-    public static Properties Read(Path configFilePath) {
+    public static Properties read(Path configFilePath) {
         Properties prop = new Properties();
         try (FileInputStream fis = new FileInputStream(configFilePath.toString())) {
             prop.load(fis);

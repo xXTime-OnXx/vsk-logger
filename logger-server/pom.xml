@@ -31,6 +31,13 @@
         VSK Logger Server von Logger g04.
     </description>
 
+    <properties>
+        <jar.start.class>ch.hslu.vsk.logger.server.Application</jar.start.class>
+        <docker.user>tiimonschmid</docker.user>
+        <docker.image>logger-server</docker.image>
+        <docker.port>5555</docker.port>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>ch.hslu.vsk24fs.g04</groupId>
@@ -115,6 +122,30 @@
                 </configuration>
             </plugin>
             <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <finalName>g04-logger-server</finalName>
+                    <archive>
+                        <manifest>
+                            <mainClass>${jar.start.class}</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                    <appendAssemblyId>false</appendAssemblyId>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-deploy-plugin</artifactId>
             </plugin>
@@ -164,7 +195,7 @@
                         <manifest>
                             <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
                             <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                            <mainClass>${jar.start.class}</mainClass>
+                            <mainClass>ch.hslu.vsk.logger.server.Application</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -323,6 +354,42 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>docker-image</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                        <version>0.44.0</version>
+                        <configuration>
+                            <images>
+                                <image>
+                                    <name>${docker.user}/${docker.image}:%l</name>
+                                    <run>
+                                        <ports>
+                                            <port>${docker.port}:${docker.port}</port>
+                                        </ports>
+                                    </run>
+                                </image>
+                            </images>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>build</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>build</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <reporting>
         <plugins>
