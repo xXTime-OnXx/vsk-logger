@@ -73,7 +73,7 @@
             <groupId>ch.hslu.vsk24fs.g04</groupId>
             <artifactId>g04-stringpersistor</artifactId>
         </dependency>
-        </dependency>
+
         <dependency>
             <groupId>ch.hslu.vsk24fs</groupId>
             <artifactId>loggerinterface</artifactId>
