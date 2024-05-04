@@ -2,15 +2,16 @@ package ch.hslu.vsk.logger.server;
 
 import ch.hslu.vsk.logger.common.JsonMapper;
 import ch.hslu.vsk.logger.common.LogMessage;
+import ch.hslu.vsk.logger.common.StringPersistorAdapter;
 import ch.hslu.vsk.stringpersistor.api.StringPersistor;
 
 public class LoggerServer {
     private final ZMQSocketHandler socketHandler;
-    private final StringPersistor stringPersistor;
+    private StringPersistorAdapter stringPersistorAdapter;
 
-    public LoggerServer(String address, StringPersistor stringPersistor) {
+    public LoggerServer(String address, StringPersistorAdapter stringPersistorAdapter) {
         this.socketHandler = new ZMQSocketHandler(address);
-        this.stringPersistor = stringPersistor;
+        this.stringPersistorAdapter = stringPersistorAdapter;
     }
 
     public void start() {
@@ -18,7 +19,7 @@ public class LoggerServer {
             String message = socketHandler.receive();
             System.out.println("Received message: " + message);
             LogMessage logMessage = JsonMapper.fromString(message, LogMessage.class);
-            stringPersistor.save(logMessage.getTimestamp(), logMessage.toStringWithoutTimestamp());
+            stringPersistorAdapter.save(logMessage.getTimestamp(), logMessage.toStringWithoutTimestamp());
             socketHandler.reply("received");
         }
     }
