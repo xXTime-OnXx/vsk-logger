@@ -8,6 +8,7 @@ import org.zeromq.ZMQ;
 
 import java.net.URI;
 import java.nio.file.Path;
+import java.rmi.ConnectException;
 import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -43,15 +44,16 @@ class LoggerClient {
                 socket.send("HEARTBEAT");
                 if (socket.recvStr() == null) { // Wenn keine Antwort empfangen wird
                     reconnect();
+                }else{
+                    sendStoredMessages();
                 }
-                sendStoredMessages();
             } catch (Exception e) {
                 reconnect();
             }
         }, 0, 1, TimeUnit.MINUTES);
     }
 
-    private void sendStoredMessages() {
+    public void sendStoredMessages() {
         List<PersistedString> messages = persistor.get(Integer.MAX_VALUE);
         for (PersistedString ps : messages) {
             sendLogMessage(ps.getPayload());
@@ -65,12 +67,11 @@ class LoggerClient {
             if (response != null) {
                 return response;
             } else {
-                persistor.save(Instant.now(), logMessage);
-                return "Message stored locally due to connection failure";
+                throw new ConnectException("Message stored locally due to connection failure");
             }
         } catch (Exception e) {
             persistor.save(Instant.now(), logMessage);
-            return "Message stored locally due to connection failure";
+            return "Message stored locally due to connection failure"; //Hier könnte auch eine Exception gewordfen werden, wenn man eine ExceptionMiddleWare baut, welche sich darum kümmert.
         }
     }
 }
