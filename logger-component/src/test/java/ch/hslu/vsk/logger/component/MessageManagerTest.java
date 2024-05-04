@@ -22,7 +22,7 @@ class MessageManagerTest {
 
     @Test
     void saveShouldSendLogMessageAsJsonToTarget() throws JsonProcessingException {
-        MessageManager messageManager = new MessageManager(loggerClient, Path.of("/dev"));
+        MessageManager messageManager = new MessageManager(loggerClient);
         LogMessage logMessage = new LogMessage("Test",LogLevel.Info,"Log Message");
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String logMessageJson = objectMapper.writeValueAsString(logMessage);
