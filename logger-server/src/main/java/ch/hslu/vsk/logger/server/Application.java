@@ -12,7 +12,8 @@ public class Application {
         Properties prop = ConfigFileReader.read(Path.of("app.config"));
 
         StringPersistor stringPersistor = StringPersistorFactory.create(Path.of(prop.getProperty("logFilePath")));
-        LoggerServer loggerServer = new LoggerServer(prop.getProperty("url") + ":" + prop.getProperty("port"), stringPersistor);
+        MessageManager messageManager = new MessageManager(stringPersistor);
+        LoggerServer loggerServer = new LoggerServer(prop.getProperty("url") + ":" + prop.getProperty("port"), messageManager);
         loggerServer.start();
     }
 }

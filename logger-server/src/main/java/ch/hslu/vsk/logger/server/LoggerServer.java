@@ -1,24 +1,19 @@
 package ch.hslu.vsk.logger.server;
 
-import ch.hslu.vsk.logger.common.JsonMapper;
-import ch.hslu.vsk.logger.common.LogMessage;
-import ch.hslu.vsk.stringpersistor.api.StringPersistor;
-
 public class LoggerServer {
     private final ZMQSocketHandler socketHandler;
-    private final StringPersistor stringPersistor;
+    private final MessageManager messageManager;
 
-    public LoggerServer(String address, StringPersistor stringPersistor) {
+    public LoggerServer(String address, MessageManager messageManager) {
         this.socketHandler = new ZMQSocketHandler(address);
-        this.stringPersistor = stringPersistor;
+        this.messageManager = messageManager;
     }
 
     public void start() {
+        System.out.println("LoggerServer started");
         while (!Thread.currentThread().isInterrupted()) {
             String message = socketHandler.receive();
-            System.out.println("Received message: " + message);
-            LogMessage logMessage = JsonMapper.fromString(message, LogMessage.class);
-            stringPersistor.save(logMessage.getTimestamp(), logMessage.toStringWithoutTimestamp());
+            messageManager.save(message);
             socketHandler.reply("received");
         }
     }

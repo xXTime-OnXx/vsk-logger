@@ -8,7 +8,8 @@ public class LogMessage {
     private String source;
     private LogLevel logLevel;
     private String message;
-    private Instant timestamp;
+    private Instant createdAt;
+    private Instant receivedAt;
 
     public LogMessage() {}
 
@@ -16,7 +17,7 @@ public class LogMessage {
         this.source = source;
         this.logLevel = logLevel;
         this.message = message;
-        this.timestamp = Instant.now();
+        this.createdAt = Instant.now();
     }
 
     public String getSource() {
@@ -31,19 +32,19 @@ public class LogMessage {
         return message;
     }
 
-    public Instant getTimestamp() {
-        return timestamp;
+    public Instant getCreatedAt() {
+        return createdAt;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public Instant getReceivedAt() {
+        return receivedAt;
     }
 
-    public void setTimestamp(Instant timestamp) {
-        this.timestamp = timestamp;
+    public void received() {
+        this.receivedAt = Instant.now();
     }
 
-    public String toStringWithoutTimestamp() {
-        return String.format("%s: [%s] '%s'", source, logLevel, message);
+    public String toStringWithoutCreatedAt() {
+        return String.format("[%s] %s: [%s] '%s'", receivedAt, source, logLevel, message);
     }
 }
