@@ -46,4 +46,19 @@ public class LogMessage {
     public String toStringWithoutTimestamp() {
         return String.format("%s: [%s] '%s'", source, logLevel, message);
     }
+
+    public String toCSV() {
+        return String.format("%s,%s,%s,%s", source, logLevel, timestamp, message);
+    }
+    public static LogMessage fromCSV(String csv) {
+        String[] parts = csv.split(",");
+        System.out.println("csv: " + csv);
+        LogMessage logMessage = new LogMessage();
+        logMessage.source = parts[0];
+        logMessage.logLevel = LogLevel.valueOf(parts[1]);
+        logMessage.timestamp = Instant.parse(parts[2]);
+        logMessage.message = parts[3];
+        System.out.println("LogMessage from CSV: " + logMessage.toString());
+        return logMessage;
+    }
 }

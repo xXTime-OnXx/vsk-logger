@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.nio.file.Path;
+import java.rmi.ConnectException;
 
 import static org.mockito.Mockito.verify;
 
@@ -21,7 +22,7 @@ class MessageManagerTest {
     LoggerClient loggerClient;
 
     @Test
-    void saveShouldSendLogMessageAsJsonToTarget() throws JsonProcessingException {
+    void saveShouldSendLogMessageAsJsonToTarget() throws JsonProcessingException, ConnectException {
         MessageManager messageManager = new MessageManager(loggerClient);
         LogMessage logMessage = new LogMessage("Test",LogLevel.Info,"Log Message");
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());

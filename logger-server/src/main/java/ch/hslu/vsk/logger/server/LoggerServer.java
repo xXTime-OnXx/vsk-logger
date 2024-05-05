@@ -17,10 +17,16 @@ public class LoggerServer {
     public void start() {
         while (!Thread.currentThread().isInterrupted()) {
             String message = socketHandler.receive();
-            System.out.println("Received message: " + message);
+            if(message.equals("HEARTBEAT")){
+                System.out.println("Received heartbeat");
+                socketHandler.reply("ALIVE");
+                continue;
+            }
+            System.out.println("Received: " + message);
             LogMessage logMessage = JsonMapper.fromString(message, LogMessage.class);
             stringPersistorAdapter.save(logMessage.getTimestamp(), logMessage.toStringWithoutTimestamp());
-            socketHandler.reply("received");
+            socketHandler.reply("RECEIVED");
+            System.out.println("Received: " + logMessage.toString());
         }
     }
 }
