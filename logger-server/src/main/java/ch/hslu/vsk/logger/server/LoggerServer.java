@@ -4,10 +4,12 @@ import ch.hslu.vsk.logger.common.*;
 
 public class LoggerServer {
     private final ZMQSocketHandler socketHandler;
+    private final StorageFormatStrategy storageFormatStrategy;
     private final StringPersistorAdapter stringPersistorAdapter;
 
-    public LoggerServer(String address, StringPersistorAdapter stringPersistorAdapter) {
+    public LoggerServer(String address, StorageFormatStrategy storageFormatStrategy, StringPersistorAdapter stringPersistorAdapter) {
         this.socketHandler = new ZMQSocketHandler(address);
+        this.storageFormatStrategy = storageFormatStrategy;
         this.stringPersistorAdapter = stringPersistorAdapter;
     }
 
@@ -22,7 +24,10 @@ public class LoggerServer {
             }
 
             LogMessage logMessage = JsonMapper.fromString(message, LogMessage.class);
-            stringPersistorAdapter.save(logMessage.getTimestamp(), logMessage.toStringWithoutTimestamp());
+
+            String formattedLogMessage = storageFormatStrategy.format(logMessage);
+
+            stringPersistorAdapter.save(logMessage.getTimestamp(), formattedLogMessage);
             socketHandler.reply(ServerResponseCodes.RECEIVED.toString());
         }
     }
