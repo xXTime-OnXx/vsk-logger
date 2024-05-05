@@ -23,7 +23,7 @@ class MessageManagerTest {
 
     @Test
     void saveShouldSendLogMessageAsJsonToTarget() throws JsonProcessingException, ConnectException {
-        MessageManager messageManager = new MessageManager(loggerClient);
+        MessageManager messageManager = new MessageManager(loggerClient, Path.of("test.txt"));
         LogMessage logMessage = new LogMessage("Test",LogLevel.Info,"Log Message");
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         String logMessageJson = objectMapper.writeValueAsString(logMessage);
@@ -32,5 +32,4 @@ class MessageManagerTest {
 
         verify(loggerClient).sendLogMessage(logMessageJson);
     }
-
 }

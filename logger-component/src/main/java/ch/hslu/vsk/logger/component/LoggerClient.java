@@ -1,31 +1,21 @@
 package ch.hslu.vsk.logger.component;
 
-import ch.hslu.vsk.logger.common.StringPersistorAdapter;
-import ch.hslu.vsk.stringpersistor.api.PersistedString;
+import ch.hslu.vsk.logger.common.ClientRequestCodes;
+import ch.hslu.vsk.logger.common.ServerResponseCodes;
 import org.zeromq.SocketType;
 import org.zeromq.ZContext;
 import org.zeromq.ZMQ;
 
-import javax.sound.midi.SysexMessage;
 import java.net.URI;
-import java.nio.file.Path;
 import java.rmi.ConnectException;
-import java.time.Instant;
-import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 class LoggerClient {
     private final ZContext context = new ZContext();
     private ZMQ.Socket socket;
-    private URI address;
-    private final StringPersistorAdapter persistor;
-    private ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+    private final URI address;
 
-    public LoggerClient(URI address, Path fallbackFilePath) {
+    public LoggerClient(URI address) {
         this.address = address;
-        this.persistor = new StringPersistorAdapter(fallbackFilePath);
 
         reconnect(); // Initial connection setup
     }
@@ -40,30 +30,33 @@ class LoggerClient {
         socket.setReceiveTimeOut(1000);
     }
 
+    /**
+     *  Tests Connection to Server
+     * @return true if connection succeeded, false if connection failed
+     */
     public boolean testConnection() {
         try {
-            socket.send("HEARTBEAT");
+            socket.send(ClientRequestCodes.HEARTBEAT.toString());
             String response = socket.recvStr();
-            if (response != null && response.equals("ALIVE")) {
-                System.out.println("Connection is still alive");
+
+            if (response != null && response.equals(ServerResponseCodes.ALIVE.toString())) {
+                System.out.println("Connection is alive");
                 return true;
             }
         } catch (Exception e) {
-            System.out.println("Reconnecting due to exception: " + e.getMessage());
+            System.out.println("Connection failed due to exception: " + e.getMessage());
         }
         return false;
     }
     public void sendLogMessage(String logMessage) throws ConnectException {
-        System.out.println("Sending message: " + logMessage);
+        System.out.println("Trying to send message: " + logMessage);
         socket.send(logMessage);
-        System.out.println("Sent message: " + logMessage);
 
         String response = socket.recvStr();
         System.out.println("Received response: " + response);
 
-        if (response == null || !response.equals("RECEIVED")) {
-            System.out.println("Failed to send message: " + logMessage);
-            throw new ConnectException("Message stored locally due to connection failure");
+        if (response == null || !response.equals(ServerResponseCodes.RECEIVED.toString())) {
+            throw new ConnectException("Failed to send message: " + logMessage);
         }
     }
 }
