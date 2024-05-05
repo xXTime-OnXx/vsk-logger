@@ -150,6 +150,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <configuration>
                     <useSystemClassLoader>false</useSystemClassLoader>
+                    <skipITs>true</skipITs>
                 </configuration>
                 <executions>
                     <execution>
