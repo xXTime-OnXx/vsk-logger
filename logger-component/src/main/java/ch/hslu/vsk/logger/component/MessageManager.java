@@ -9,7 +9,7 @@ class MessageManager {
 
     private final LoggerClient loggerClient;
 
-    public MessageManager(LoggerClient loggerClient, Path fallbackFile) {
+    public MessageManager(LoggerClient loggerClient) {
         this.loggerClient = loggerClient;
     }
 
