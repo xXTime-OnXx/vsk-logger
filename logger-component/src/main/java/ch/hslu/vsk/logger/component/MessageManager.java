@@ -57,9 +57,6 @@ class MessageManager {
                         System.out.println("Failed to send stored message" );
                         loggerClient.reconnect();
                         break;
-                    } catch (Exception e)
-                    {
-                        System.out.println("THIS IS A EXTREMELY RARE EXCEPTION!!!" + e.getMessage());
                     }
 
                     messages.addAll(persistor.get(Integer.MAX_VALUE));
