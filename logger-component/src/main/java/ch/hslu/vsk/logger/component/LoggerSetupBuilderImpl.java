@@ -8,7 +8,7 @@ import java.net.URI;
 import java.nio.file.Path;
 import java.util.Objects;
 
-public class LoggerSetupBuilderImpl implements LoggerSetupBuilder {
+public class  LoggerSetupBuilderImpl implements LoggerSetupBuilder {
 
     private LogLevel minLogLevel;
     private String source;
