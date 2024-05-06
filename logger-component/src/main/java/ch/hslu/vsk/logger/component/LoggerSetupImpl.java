@@ -3,6 +3,8 @@ package ch.hslu.vsk.logger.component;
 import ch.hslu.vsk.logger.api.LogLevel;
 import ch.hslu.vsk.logger.api.Logger;
 import ch.hslu.vsk.logger.api.LoggerSetup;
+import ch.hslu.vsk.logger.common.CsvStorageFormatStrategy;
+import ch.hslu.vsk.logger.common.StorageFormatStrategy;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -25,7 +27,9 @@ class LoggerSetupImpl implements LoggerSetup {
     @Override
     public Logger createLogger() {
         LoggerClient loggerClient = new LoggerClient(targetServerAddress);
-        MessageManager messageManager = new MessageManager(loggerClient, fallbackFile);
+        StorageFormatStrategy storageFormatStrategy = new CsvStorageFormatStrategy();
+
+        MessageManager messageManager = new MessageManager(loggerClient, storageFormatStrategy, fallbackFile);
         return new LoggerImpl(this, messageManager);
     }
 

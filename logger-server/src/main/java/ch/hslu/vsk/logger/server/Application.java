@@ -1,6 +1,8 @@
 package ch.hslu.vsk.logger.server;
 
 import ch.hslu.vsk.logger.common.ConfigFileReader;
+import ch.hslu.vsk.logger.common.CsvStorageFormatStrategy;
+import ch.hslu.vsk.logger.common.StorageFormatStrategy;
 import ch.hslu.vsk.logger.common.StringPersistorAdapter;
 
 import java.nio.file.Path;
@@ -10,8 +12,14 @@ public class Application {
     public static void main(String[] args) {
         Properties prop = ConfigFileReader.read(Path.of("app.config"));
 
+        StorageFormatStrategy storageFormatStrategy = new CsvStorageFormatStrategy();
         StringPersistorAdapter stringPersistorAdapter = new StringPersistorAdapter(Path.of(prop.getProperty("logFilePath")));
-        LoggerServer loggerServer = new LoggerServer(prop.getProperty("url") + ":" + prop.getProperty("port"), stringPersistorAdapter);
+
+        LoggerServer loggerServer = new LoggerServer(
+                prop.getProperty("url") + ":" + prop.getProperty("port"),
+                storageFormatStrategy,
+                stringPersistorAdapter);
+
         loggerServer.start();
     }
 }
