@@ -3,7 +3,6 @@ package ch.hslu.vsk.logger.component;
 import ch.hslu.vsk.logger.api.LogLevel;
 import ch.hslu.vsk.logger.api.Logger;
 import ch.hslu.vsk.logger.api.LoggerSetup;
-import ch.hslu.vsk.logger.common.StringPersistorAdapter;
 
 import java.net.URI;
 import java.nio.file.Path;
@@ -25,8 +24,8 @@ class LoggerSetupImpl implements LoggerSetup {
 
     @Override
     public Logger createLogger() {
-        LoggerClient loggerClient = new LoggerClient(targetServerAddress, fallbackFile);
-        MessageManager messageManager = new MessageManager(loggerClient);
+        LoggerClient loggerClient = new LoggerClient(targetServerAddress);
+        MessageManager messageManager = new MessageManager(loggerClient, fallbackFile);
         return new LoggerImpl(this, messageManager);
     }
 
