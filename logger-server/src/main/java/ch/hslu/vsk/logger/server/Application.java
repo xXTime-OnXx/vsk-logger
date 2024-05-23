@@ -13,12 +13,11 @@ public class Application {
         Properties prop = ConfigFileReader.read(Path.of("app.config"));
 
         StringPersistorAdapter stringPersistorAdapter = new StringPersistorAdapter(Path.of(prop.getProperty("logFilePath")));
-        MessageManager messageManager = new MessageManager(stringPersistorAdapter);
         StorageFormatStrategy storageFormatStrategy = new CsvStorageFormatStrategy();
+        MessageManager messageManager = new MessageManager(stringPersistorAdapter, storageFormatStrategy);
 
         LoggerServer loggerServer = new LoggerServer(
                 prop.getProperty("url") + ":" + prop.getProperty("port"),
-                storageFormatStrategy,
                 messageManager);
 
         loggerServer.start();
