@@ -35,6 +35,7 @@
         <module>logger-common</module>
         <module>logger-component</module>
         <module>logger-server</module>
+        <module>logger-viewer</module>
     </modules>
 
     <organization>
