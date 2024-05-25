@@ -1,9 +1,6 @@
 package ch.hslu.vsk.logger.component;
 
-import ch.hslu.vsk.logger.common.JsonMapper;
-import ch.hslu.vsk.logger.common.LogMessage;
-import ch.hslu.vsk.logger.common.StorageFormatStrategy;
-import ch.hslu.vsk.logger.common.StringPersistorAdapter;
+import ch.hslu.vsk.logger.common.*;
 import ch.hslu.vsk.stringpersistor.api.PersistedString;
 
 import java.nio.file.Path;
@@ -17,13 +14,13 @@ import java.util.concurrent.TimeUnit;
 class MessageManager {
     private final LoggerClient loggerClient;
     private final StorageFormatStrategy storageFormatStrategy;
-    private final StringPersistorAdapter persistor;
+    private final LogMessagePersistorImpl persistor;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public MessageManager(LoggerClient loggerClient, StorageFormatStrategy storageFormatStrategy, Path fallbackFilePath) {
         this.loggerClient = loggerClient;
         this.storageFormatStrategy = storageFormatStrategy;
-        this.persistor = new StringPersistorAdapter(fallbackFilePath);
+        this.persistor = new LogMessagePersistorImpl(fallbackFilePath, storageFormatStrategy);
     }
 
     public void save(LogMessage logMessage) {
@@ -32,7 +29,7 @@ class MessageManager {
             loggerClient.sendLogMessage(logMessageJson);
         } catch (Exception e) {
             System.out.println("Failed to send Message: " + e.getMessage());
-            persistor.save(Instant.now(), storageFormatStrategy.format(logMessage));
+            persistor.save(logMessage);
             System.out.println("Message stored locally due to connection failure");
 
             scheduleReconnection();
