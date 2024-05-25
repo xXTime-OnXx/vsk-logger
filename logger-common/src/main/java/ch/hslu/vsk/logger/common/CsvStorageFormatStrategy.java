@@ -4,14 +4,16 @@ import ch.hslu.vsk.logger.api.LogLevel;
 
 import java.time.Instant;
 
-public class CsvStorageFormatStrategy implements StorageFormatStrategy{
+public class CsvStorageFormatStrategy implements StorageFormatStrategy {
+
+    // TODO: add receivedAt to format
     @Override
     public String format(LogMessage logMessage) {
         return String.format(
                 "%s,%s,%s,%s",
                 logMessage.getSource(),
                 logMessage.getLogLevel(),
-                logMessage.getTimestamp(),
+                logMessage.getCreatedAt(),
                 logMessage.getMessage());
     }
 

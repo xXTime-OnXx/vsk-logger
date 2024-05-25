@@ -9,7 +9,8 @@ public class LogMessage {
     private String source;
     private LogLevel logLevel;
     private String message;
-    private Instant timestamp;
+    private Instant createdAt;
+    private Instant receivedAt;
 
     /**
      * Only for use for JsonMapper mapping.
@@ -24,7 +25,7 @@ public class LogMessage {
         this.source = source;
         this.logLevel = logLevel;
         this.message = message;
-        this.timestamp = timestamp;
+        this.createdAt = timestamp;
     }
 
     public String getSource() {
@@ -39,8 +40,16 @@ public class LogMessage {
         return message;
     }
 
-    public Instant getTimestamp() {
-        return timestamp;
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public Instant getReceivedAt() {
+        return receivedAt;
+    }
+
+    public void received() {
+        this.receivedAt = Instant.now();
     }
 
     @Override
@@ -48,11 +57,14 @@ public class LogMessage {
         if (this.getClass() != object.getClass()) {
             return false;
         }
-
         LogMessage logMessage = (LogMessage) object;
         return this.source.equals(logMessage.source)
                 && this.message.equals(logMessage.message)
                 && Objects.equals(this.logLevel, logMessage.logLevel)
-                && this.timestamp.equals(logMessage.timestamp);
+                && this.createdAt.equals(logMessage.createdAt);
+    }
+
+    public String toStringWithoutCreatedAt() {
+        return String.format("[%s] %s: [%s] '%s'", receivedAt, source, logLevel, message);
     }
 }
