@@ -1,6 +1,5 @@
 package ch.hslu.vsk.logger.common;
 
-import ch.hslu.vsk.stringpersistor.api.PersistedString;
 import ch.hslu.vsk.stringpersistor.api.StringPersistor;
 import ch.hslu.vsk.stringpersistor.impl.StringPersistorFactory;
 
@@ -17,11 +16,16 @@ public class LogMessagePersistorImpl implements LogMessagePersistor{
     }
 
     public void save(LogMessage message) {
+        System.out.println("Saving message: " + message);
+        System.out.println("Saving message: " + message.getCreatedAt());
+        System.out.println("Saving message: " + formatStrategy.format(message));
         stringPersistor.save(message.getCreatedAt(), formatStrategy.format(message));
     }
 
-    public List<PersistedString> get(int count) {
-        return stringPersistor.get(count);
+    public List<LogMessage> get(int count) {
+        return stringPersistor.get(count).stream()
+                .map(persistedString -> formatStrategy.toLogMessage(persistedString.getPayload()))
+                .toList();
     }
 
 }

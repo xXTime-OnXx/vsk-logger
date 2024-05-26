@@ -1,23 +1,16 @@
 package ch.hslu.vsk.logger.server;
 
-import ch.hslu.vsk.logger.api.*;
 import ch.hslu.vsk.logger.common.ConfigFileReader;
 import ch.hslu.vsk.logger.common.CsvStorageFormatStrategy;
-import ch.hslu.vsk.logger.common.LogMessagePersistor;
 import ch.hslu.vsk.logger.common.LogMessagePersistorImpl;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.utility.DockerImageName;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.net.URI;
 import java.nio.file.Path;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -27,24 +20,10 @@ import java.util.concurrent.TimeUnit;
 
 public class LoggerServerKonfigIT {
 
-    private static final String DOCKER_IMAGE_NAME = "tiimonschmid/logger-server:1.0.0-SNAPSHOT";
-
-    @Container
-    private static GenericContainer loggerServer = new GenericContainer(DockerImageName.parse(DOCKER_IMAGE_NAME))
-            .withExposedPorts();
 
     @TempDir
     static Path tempDir;
 
-    @BeforeAll
-    static void beforeAll() {
-        loggerServer.start();
-    }
-
-    @AfterAll
-    static void afterAll() {
-        loggerServer.stop();
-    }
 
     @Test
     void testLoggerServerWithDifferentConfigurations() throws IOException, InterruptedException {

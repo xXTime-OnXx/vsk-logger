@@ -19,6 +19,8 @@ public class MessageManager {
         LogMessage logMessage = JsonMapper.fromString(message, LogMessage.class);
         logMessage.received();
         System.out.println("Received message: " + logMessage.toStringWithoutCreatedAt());
+        System.out.println("Received at: " + logMessage.getCreatedAt());
+        System.out.println("Message: " + logMessage.getMessage());
         logMessagePersistor.save(logMessage);
     }
 }

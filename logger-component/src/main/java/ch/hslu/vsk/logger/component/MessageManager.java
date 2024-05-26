@@ -1,11 +1,9 @@
 package ch.hslu.vsk.logger.component;
 
 import ch.hslu.vsk.logger.common.*;
-import ch.hslu.vsk.stringpersistor.api.PersistedString;
 
 import java.nio.file.Path;
 import java.rmi.ConnectException;
-import java.time.Instant;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -41,12 +39,11 @@ class MessageManager {
             System.out.println("Reconnecting...");
             boolean isConnected = loggerClient.testConnection();
             if(isConnected) {
-                List<PersistedString> messages = persistor.get(Integer.MAX_VALUE);
+                List<LogMessage> messages = persistor.get(Integer.MAX_VALUE);
 
                 while (!messages.isEmpty()) {
                     try {
-                        LogMessage logMessage = storageFormatStrategy.toLogMessage(messages.getFirst().getPayload());
-                        loggerClient.sendLogMessage(JsonMapper.toString(logMessage));
+                        loggerClient.sendLogMessage(JsonMapper.toString(messages.getFirst()));
                         System.out.println("Sent stored message" );
 
                         messages.removeFirst();
