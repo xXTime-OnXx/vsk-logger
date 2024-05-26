@@ -1,10 +1,9 @@
 package ch.hslu.vsk.logger.server;
 
-import ch.hslu.vsk.logger.common.ConfigFileReader;
+import ch.hslu.vsk.logger.common.Config;
+import ch.hslu.vsk.logger.common.ConfigReader;
 import ch.hslu.vsk.logger.common.CsvStorageFormatStrategy;
 import ch.hslu.vsk.logger.common.LogMessagePersistorImpl;
-
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -56,11 +55,11 @@ public class LoggerServerKonfigIT {
     }
 
     private void startAndTestLoggerServer(Path configFilePath, int port) throws InterruptedException {
-        Properties prop = ConfigFileReader.read(configFilePath);
-        MessageManager messageManager = new MessageManager(new LogMessagePersistorImpl(Path.of(prop.getProperty("logFilePath")), new CsvStorageFormatStrategy()));
+        Config config = ConfigReader.read(configFilePath);
+        MessageManager messageManager = new MessageManager(new LogMessagePersistorImpl(config.getLogFilePath(), new CsvStorageFormatStrategy()));
 
-        LoggerServer loggerServerInstance = new LoggerServer(prop.getProperty("url") + ":" + prop.getProperty("port"), messageManager);
-        System.out.println("Starting LoggerServer with config file: " + configFilePath + " on url: " + prop.getProperty("url") + " and port: " + port + "and log file path: " + prop.getProperty("logFilePath"));
+        LoggerServer loggerServerInstance = new LoggerServer(config.getUrl() + ":" + config.getPort(), messageManager);
+        System.out.println("Starting LoggerServer with config file: " + configFilePath + " on url: " + config.getUrl() + " and port: " + port + "and log file path: " + config.getLogFilePath());
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Future<?> future = executorService.submit(loggerServerInstance::start);

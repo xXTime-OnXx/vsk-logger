@@ -3,17 +3,21 @@ package ch.hslu.vsk.logger.server;
 import ch.hslu.vsk.logger.common.*;
 
 import java.nio.file.Path;
-import java.util.Properties;
 
 public class Application {
     public static void main(String[] args) {
-        Properties prop = ConfigFileReader.read(Path.of("app.config"));
-        StorageFormatStrategy storageFormatStrategy = new CsvStorageFormatStrategy();
-        LogMessagePersistorImpl logMessagePersistor = new LogMessagePersistorImpl(Path.of(prop.getProperty("logFilePath")), storageFormatStrategy);
+        Config config = ConfigReader.read(Path.of("app.config"));
+
+        if (config == null) {
+            throw new RuntimeException("LoggerServer cant be started because the config is null!");
+        }
+
+        StorageFormatStrategy storageFormatStrategy = new FinalCompetitionStorageFormatStrategy();
+        LogMessagePersistorImpl logMessagePersistor = new LogMessagePersistorImpl(config.getLogFilePath(), storageFormatStrategy);
         MessageManager messageManager = new MessageManager(logMessagePersistor);
 
         LoggerServer loggerServer = new LoggerServer(
-                prop.getProperty("url") + ":" + prop.getProperty("port"),
+                config.getUrl() + ":" + config.getPort(),
                 messageManager);
 
         loggerServer.start();
