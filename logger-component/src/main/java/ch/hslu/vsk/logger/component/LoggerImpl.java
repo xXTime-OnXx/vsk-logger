@@ -42,11 +42,10 @@ class LoggerImpl implements Logger {
 
     @Override
     public void log(LogLevel logLevel, String message) {
-        if (logLevel.ordinal() > loggerSetup.getMinLogLevel().ordinal()) {
-            return;
+        if (logLevel.ordinal() <= loggerSetup.getMinLogLevel().ordinal()) {
+            LogMessage logMessage = new LogMessage(loggerSetup.getSource(), logLevel, message);
+            messageManager.save(logMessage);
         }
-        LogMessage logMessage = new LogMessage(loggerSetup.getSource(), logLevel, message);
-        messageManager.save(logMessage);
     }
 
 }
