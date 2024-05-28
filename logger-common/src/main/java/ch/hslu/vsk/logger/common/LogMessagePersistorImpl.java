@@ -16,9 +16,6 @@ public class LogMessagePersistorImpl implements LogMessagePersistor{
     }
 
     public void save(LogMessage message) {
-        System.out.println("Saving message: " + message);
-        System.out.println("Saving message: " + message.getCreatedAt());
-        System.out.println("Saving message: " + formatStrategy.format(message));
         stringPersistor.save(message.getCreatedAt(), formatStrategy.format(message));
     }
 

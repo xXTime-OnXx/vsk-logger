@@ -1,42 +1,24 @@
 package ch.hslu.vsk.logger.server;
 
-import org.zeromq.SocketType;
-import org.zeromq.ZContext;
-import org.zeromq.ZMQ;
+import com.hazelcast.collection.IQueue;
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 
 public class Producer {
-    private static final ZContext context = new ZContext();
-    private final ZMQ.Socket socket = context.createSocket(SocketType.PUSH);
 
-    public Producer(String address) {
-        if (!socket.bind(address)) {
-            throw new RuntimeException("Cannot bind to " + address);
-        }
+    HazelcastInstance hazelcastInstance;
+    IQueue<String> queue;
+
+    public Producer() {
+        hazelcastInstance = Hazelcast.newHazelcastInstance();
+        queue = hazelcastInstance.getQueue("log-message");
     }
 
     public void send(String message) {
-        // TODO: check if subscriber is available, otherwise dont send message
-        if (!socket.send(message.getBytes(ZMQ.CHARSET))) {
-            System.out.println("sending of message failed, aborting");
-        }
-    }
-
-    public static void main(String[] args)  {
-        Producer producer = new Producer("tcp://localhost:5555");
-        int counter = 1;
-        while (!Thread.currentThread().isInterrupted()) {
-            producer.send("#" + counter + " producer message");
-            counter++;
-            sleep();
-        }
-    }
-
-    public static void sleep() {
         try {
-            Thread.sleep(500);
+            queue.put(message);
         } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
+            throw new IllegalStateException("Couldn't add Message to Hazelcast Queue");
         }
     }
-
 }

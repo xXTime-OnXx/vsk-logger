@@ -1,40 +1,61 @@
 package ch.hslu.vsk.logger.viewer;
 
-import org.zeromq.SocketType;
-import org.zeromq.ZContext;
-import org.zeromq.ZMQ;
+import com.hazelcast.client.HazelcastClient;
+import com.hazelcast.client.config.ClientConfig;
+import com.hazelcast.collection.IQueue;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.spi.exception.TargetDisconnectedException;
+
+import java.io.InputStream;
+import java.util.logging.LogManager;
 
 public class Consumer {
 
-    private static final ZContext context = new ZContext();
-    private final ZMQ.Socket socket = context.createSocket(SocketType.PULL);
+    private final HazelcastInstance hazelcastInstance;
+    private final IQueue<String> queue;
+    private final LogMessageViewer logMessageViewer = new LogMessageViewer();
 
     public Consumer(String address) {
-        if (!socket.connect(address)) {
-            throw new RuntimeException("Cannot connect to " + address);
-        }
+        setHazelcastLogLevel();
+        ClientConfig clientConfig = new ClientConfig();
+        clientConfig.getNetworkConfig().addAddress(address);
+        hazelcastInstance = HazelcastClient.newHazelcastClient(clientConfig);
+        queue = hazelcastInstance.getQueue("log-message");
     }
 
-    public String getMessage() {
-        byte[] message = socket.recv();
-        if (message == null) {
-            throw new RuntimeException("failed to receive message (errno: " + socket.errno() +")");
+    public String getMessage() throws LoggerServerDisconnectedException {
+        try {
+            return queue.take();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (TargetDisconnectedException e) {
+            throw new LoggerServerDisconnectedException("LoggerServer is disconnected");
         }
-        return new String(message, ZMQ.CHARSET);
     }
 
     public void serve() {
+        removeOldLogMessages();
         while (!Thread.currentThread().isInterrupted()) {
-            System.out.println("Consumer startet");
-            String message = getMessage();
-            System.out.println("Message received");
-            System.out.println(message);
+            try {
+                String message = getMessage();
+                logMessageViewer.showLogMessage(message);
+            } catch (LoggerServerDisconnectedException e) {
+                System.out.println("LoggerServer is disconnected");
+            }
         }
+        hazelcastInstance.shutdown();
     }
 
-    public static void main(String[] args)  {
-        Consumer consumer = new Consumer("tcp://localhost:5555");
-        consumer.serve();
+    private void removeOldLogMessages() {
+        queue.clear();
+    }
+
+    private void setHazelcastLogLevel() {
+        try (InputStream stream = Consumer.class.getClassLoader().getResourceAsStream("logging.properties")) {
+            LogManager.getLogManager().readConfiguration(stream);
+        } catch (Exception e) {
+            throw new IllegalStateException("Couldn't set Hazelcast LogLevel to Warning", e);
+        }
     }
 
 }
