@@ -26,7 +26,7 @@ class LoggerSetupImpl implements LoggerSetup {
 
     @Override
     public Logger createLogger() {
-        LoggerClient loggerClient = new LoggerClient(targetServerAddress);
+        LoggerClient loggerClient = new LoggerClient("tcp://"+targetServerAddress);
         StorageFormatStrategy storageFormatStrategy = new CsvStorageFormatStrategy();
 
         MessageManager messageManager = new MessageManager(loggerClient, storageFormatStrategy, fallbackFile);
